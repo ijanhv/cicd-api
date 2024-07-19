@@ -1,0 +1,62 @@
+GET http://localhost:8001/public HTTP/1.1
+
+###
+GET http://localhost:8001/private HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjAzNDEzMTIsInVzZXJfaWQiOjJ9.mxWVpKTfoy5F7vd8tBpl59IcIf7aejIkZ0tCE-_Xe7g
+
+###
+POST http://localhost:8001/v1/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Jane Doe",
+    "email": "janedoe@gmail.com",
+    "password": "Jane@1234"
+}
+
+###
+POST http://localhost:8001/v1/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "janedoe@gmail.com",
+    "password": "Jane@1234"
+}
+
+###
+POST http://localhost:8001/v1/auth/refresh HTTP/1.1
+Content-Type: application/json
+
+{
+    "refreshToken" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbHltZ25saXAwMDAwYW8xYjZhYWcxZnpjIiwiaWF0IjoxNzIxMDE2MzM2LCJleHAiOjE3MjM2MDgzMzYsInR5cGUiOiJSRUZSRVNIIn0.cR7RPoOYf6ObjxPwHspOxzAefdp8P2wUOZuKgc0BRzU"
+}
+
+# PROJECT
+
+### create new project
+POST http://localhost:8001/v1/projects HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "My Metal Space 5",
+    "description": "My Metal Space is an ecommerce applciation with frontend in Nextjs, Backend in Nestjs and it inlcudes a website for users and an admin panel to manage products, orders, payments"
+}
+
+### update project
+PATCH  http://localhost:8001/v1/projects HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": "clyr5gh5g000013p6soa87obc",
+    "name": "My Metal Space",
+}
+
+
+### get projects
+GET http://localhost:8001/v1/projects HTTP/1.1
+Content-Type: application/json
+
+
+### delete project
+DELETE http://localhost:8001/v1/projects/clyr5whv70001fm6ijsfnoonw HTTP/1.1
+Content-Type: application/json

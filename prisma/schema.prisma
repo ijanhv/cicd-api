@@ -1,0 +1,191 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets   = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  name            String
+  password        String?
+  role            Role     @default(USER)
+  isEmailVerified Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  Token           Token[]
+}
+
+model Token {
+  id          String    @id @default(cuid())
+  token       String
+  type        TokenType
+  expires     DateTime
+  blacklisted Boolean
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  name         String
+  description  String
+  createdAt    DateTime      @default(now())
+  postgres     Postgres[]
+  applications Application[]
+  MongoDB      MongoDB[]
+}
+
+// Postgres model
+model Postgres {
+  postgresId        String            @id @default(cuid())
+  name              String
+  appName           String
+  databaseName      String
+  databaseUser      String
+  databasePassword  String
+  description       String
+  dockerImage       String
+  command           String?
+  env               String?
+  applicationStatus ApplicationStatus
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @default(now())
+
+  projectId String
+  Project   Project @relation(fields: [projectId], references: [id])
+}
+
+// MongoDB model
+model MongoDB {
+  mongoId           String            @id @default(cuid())
+  name              String
+  appName           String
+  databaseName      String
+  databaseUser      String
+  databasePassword  String
+  description       String
+  dockerImage       String
+  command           String?
+  env               String?
+  applicationStatus ApplicationStatus
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @default(now())
+
+  projectId String
+  Project   Project @relation(fields: [projectId], references: [id])
+}
+
+model Deployment {
+  deploymentId  String           @id @default(uuid())
+  title         String
+  description   String?
+  status        DeploymentStatus @default(RUNNING)
+  logPath       String
+  applicationId String
+  createdAt     DateTime         @default(now())
+
+  Application Application @relation(fields: [applicationId], references: [applicationId])
+
+  @@index([applicationId])
+}
+
+model Application {
+  applicationId       String            @id @default(uuid())
+  name                String
+  appName             String            @unique
+  description         String?
+  env                 String?
+  memoryReservation   Int?
+  memoryLimit         Int?
+  cpuReservation      Int?
+  cpuLimit            Int?
+  title               String?
+  enabled             Boolean?
+  subtitle            String?
+  command             String?
+  refreshToken        String            @default(uuid())
+  sourceType          SourceType        @default(GITHUB)
+  repository          String?
+  owner               String?
+  branch              String?
+  buildPath           String?           @default("/")
+  autoDeploy          Boolean?
+  username            String?
+  password            String?
+  dockerImage         String?
+  customGitUrl        String?
+  customGitBranch     String?
+  customGitBuildPath  String?
+  customGitSSHKey     String?
+  dockerfile          String?
+  healthCheckSwarm    Json?
+  restartPolicySwarm  Json?
+  placementSwarm      Json?
+  updateConfigSwarm   Json?
+  rollbackConfigSwarm Json?
+  modeSwarm           Json?
+  labelsSwarm         Json?
+  networkSwarm        Json?
+  replicas            Int               @default(1)
+  applicationStatus   ApplicationStatus @default(IDLE)
+  buildType           BuildType         @default(NIXPACKS)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @default(now())
+
+  projectId String
+
+  Project     Project      @relation(fields: [projectId], references: [id])
+  Deployments Deployment[]
+
+  @@index([projectId])
+}
+
+enum ApplicationStatus {
+  IDLE
+  RUNNING
+  DONE
+  ERROR
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum DeploymentStatus {
+  RUNNING
+  DONE
+  ERROR
+}
+
+enum TokenType {
+  ACCESS
+  REFRESH
+  RESET_PASSWORD
+  VERIFY_EMAIL
+}
+
+enum SourceType {
+  DOCKER
+  GIT
+  GITHUB
+}
+
+enum BuildType {
+  DOCKERFILE
+  HEROKU
+  PAKETU
+  NIXPACKS
+}
