@@ -1,4 +1,4 @@
-import { Prisma, Project } from "@prisma/client";
+import { Application, Prisma, Project } from "@prisma/client";
 import httpStatus from "http-status";
 import prisma from "../client";
 import ApiError from "@utils/apiError";
@@ -23,9 +23,47 @@ const createProject = async (data: Omit<Project, "id" | "createdAt">): Promise<P
  */
 const getProjects = async (): Promise<Project[]> => {
   // Query all projects
-  const projects = await prisma.project.findMany();
+  const projects = await prisma.project.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
   return projects;
 };
+
+
+// get services by projectID
+/**
+ * Get project by ID
+ * @param {string} id - Project ID
+ * @returns {Promise<Postgres | Mongodb | Application | null>} Project object if found, null if not found
+ */
+const getProjectServicesByProjectId = async (projectId: string) => {
+  const project = await getProjectById(projectId) 
+  if(!project) {
+    if (!project) {
+      throw new ApiError(httpStatus.NOT_FOUND, "Project not found");
+    }
+  }
+  const postgres = await prisma.postgres.findMany({
+    where: {
+      projectId
+    }
+  })
+  const mongoDB = await prisma.mongoDB.findMany({
+    where: {
+      projectId
+    }
+  })
+
+  const application = await prisma.application.findMany({
+    where: {
+      projectId
+    }
+  })
+
+  return { postgres, mongoDB, application }
+}
 
 /**
  * Get project by ID
@@ -93,4 +131,5 @@ export default {
   getProjectById,
   updateProject,
   deleteProject,
+  getProjectServicesByProjectId
 };

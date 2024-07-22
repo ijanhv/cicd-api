@@ -4,8 +4,11 @@ import bodyParser from "body-parser";
 import { Server } from "http";
 import helmet from "helmet";
 import routes from './routes/v1';
+import { createServer } from 'http';
 
 import cookieParser from "cookie-parser";
+import { Server as SocketIOServer } from 'socket.io'; // Import Socket.IO server
+
 import xss from "@middleware/xss";
 import compression from "compression";
 import config from "@config/envCofig";
@@ -53,10 +56,28 @@ app.use(errorConverter);
 // handle error
 app.use(errorHandler);
 
-let server: Server;
+const server = createServer(app); // Create the HTTP server
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: '*',
+  },
+}); // Initialize Socket.IO server
+
+io.on('connection', (socket) => {
+  console.log('Client connected');
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
+
+
 prisma.$connect().then(() => {
   console.info('Connected to Postgres Database');
-  server = app.listen(config.port, () => {
+  server.listen(config.port, () => {
     console.info(`Listening to port ${config.port}`);
   });
 });
+
+
+export default io; 

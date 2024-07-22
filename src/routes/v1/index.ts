@@ -4,6 +4,7 @@ import projectRoute from "./project.route";
 import applicationRoute from "./application.route";
 import postgresRoute from "./postgres.route";
 import mongodbRoute from './mongodb.route'
+import deploymentRoute from './deployment.route'
 
 const router = express.Router();
 
@@ -27,6 +28,10 @@ const defaultRoutes = [
   {
     path: "/database/mongo",
     route: mongodbRoute
+  },
+  {    path: "/deployment",
+    route: deploymentRoute
+
   }
 ];
 

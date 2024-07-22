@@ -29,7 +29,7 @@ router.get(
 );
 
 // Update PostgreSQL instance by ID route
-router.put(
+router.patch(
   "/:id",
   validate(postgresValidation.updatePostgresSchema),
   postgresController.updatePostgres
@@ -41,5 +41,21 @@ router.delete(
   validate(postgresValidation.updatePostgresSchema),
   postgresController.deletePostgres
 );
+
+
+router.post(
+  "/postgres.start/:postgresId",
+  postgresController.startPostgresContainer
+)
+
+router.post(
+  "/postgres.stop/:postgresId",
+  postgresController.stopPostgresContainer
+)
+
+router.delete(
+  "/postgres.delete/:postgresId",
+  postgresController.deletePostgresContainer
+)
 
 export default router;

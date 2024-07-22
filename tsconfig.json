@@ -17,7 +17,9 @@
       "@config/*": ["config/*"],
       "@services/*": ["services/*"],
       "@utils/*":["utils/*"],
-      "@validations/*":["validations/*"]
+      "@validations/*":["validations/*"],
+      "@constants/*": ["constants/*"],
+      "@helper/*": ["helper/*"]
     }
   },
   "include": ["src/**/*.ts"],

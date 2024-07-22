@@ -40,6 +40,9 @@ const getPostgresById = async (id: string): Promise<Postgres | null> => {
   try {
     return await prisma.postgres.findUnique({
       where: { postgresId: id },
+      include: {
+        Project: true 
+      }
     });
   } catch (error) {
     throw new ApiError(httpStatus.NOT_FOUND, "Postgres instance not found");
@@ -54,6 +57,9 @@ const getPostgresByProjectId = async (id: string): Promise<Postgres[] | null> =>
   try {
     return await prisma.postgres.findMany({
       where: { projectId: id },
+      include: {
+        Project: true 
+      }
     });
   } catch (error) {
     throw new ApiError(httpStatus.NOT_FOUND, "Postgres instance not found");
@@ -73,6 +79,7 @@ const updatePostgres = async (id: string, data: Partial<Postgres>): Promise<Post
       data,
     });
   } catch (error) {
+    console.log(error)
     throw new ApiError(httpStatus.BAD_REQUEST, "Could not update Postgres instance");
   }
 };

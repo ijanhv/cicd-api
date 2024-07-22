@@ -25,6 +25,12 @@ router.get(
   projectController.getProjectById
 );
 
+router.get(
+  "/services/:projectId",
+  validate(projectValidation.getProjectServices),
+  projectController.getProjectServices
+);
+
 // update project by id
 router.patch(
   "/:id",

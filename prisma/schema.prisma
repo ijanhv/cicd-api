@@ -6,7 +6,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets   = ["native", "linux-musl-arm64-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -59,6 +59,7 @@ model Postgres {
   dockerImage       String
   command           String?
   env               String?
+  externalPort      Int?
   applicationStatus ApplicationStatus
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @default(now())
@@ -79,6 +80,7 @@ model MongoDB {
   dockerImage       String
   command           String?
   env               String?
+  externalPort      Int?
   applicationStatus ApplicationStatus
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @default(now())
@@ -102,54 +104,52 @@ model Deployment {
 }
 
 model Application {
-  applicationId       String            @id @default(uuid())
-  name                String
-  appName             String            @unique
-  description         String?
-  env                 String?
-  memoryReservation   Int?
-  memoryLimit         Int?
-  cpuReservation      Int?
-  cpuLimit            Int?
-  title               String?
-  enabled             Boolean?
-  subtitle            String?
-  command             String?
-  refreshToken        String            @default(uuid())
-  sourceType          SourceType        @default(GITHUB)
-  repository          String?
-  owner               String?
-  branch              String?
-  buildPath           String?           @default("/")
-  autoDeploy          Boolean?
-  username            String?
-  password            String?
-  dockerImage         String?
-  customGitUrl        String?
-  customGitBranch     String?
-  customGitBuildPath  String?
-  customGitSSHKey     String?
-  dockerfile          String?
-  healthCheckSwarm    Json?
-  restartPolicySwarm  Json?
-  placementSwarm      Json?
-  updateConfigSwarm   Json?
-  rollbackConfigSwarm Json?
-  modeSwarm           Json?
-  labelsSwarm         Json?
-  networkSwarm        Json?
-  replicas            Int               @default(1)
-  applicationStatus   ApplicationStatus @default(IDLE)
-  buildType           BuildType         @default(NIXPACKS)
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @default(now())
-
-  projectId String
+  applicationId      String            @id @default(uuid())
+  name               String
+  appName            String            @unique
+  description        String?
+  env                String?
+  memoryReservation  Int?
+  memoryLimit        Int?
+  cpuReservation     Int?
+  cpuLimit           Int?
+  title              String?
+  enabled            Boolean?
+  subtitle           String?
+  command            String?
+  refreshToken       String            @default(uuid())
+  sourceType         SourceType        @default(GITHUB)
+  repository         String?
+  owner              String?
+  branch             String?
+  buildPath          String?           @default("/")
+  autoDeploy         Boolean?
+  username           String?
+  password           String?
+  dockerImage        String?
+  customGitUrl       String?
+  customGitBranch    String?
+  customGitBuildPath String?
+  customGitSSHKey    String?
+  dockerfile         String?
+  applicationStatus  ApplicationStatus @default(IDLE)
+  buildType          BuildType         @default(NIXPACKS)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @default(now())
+  publishedPort      Int?
+  targetPort         Int?
+  protocol           Protocol?
+  projectId          String
 
   Project     Project      @relation(fields: [projectId], references: [id])
   Deployments Deployment[]
 
   @@index([projectId])
+}
+
+enum Protocol {
+  TCP
+  UDP
 }
 
 enum ApplicationStatus {

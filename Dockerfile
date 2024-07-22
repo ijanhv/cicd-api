@@ -21,7 +21,7 @@ WORKDIR /app
 COPY package.json .
 COPY bun.lockb .
 COPY tsconfig.json .
-COPY prisma prisma
+COPY prisma ./prisma/
 
 # > 2.c -- Install dependencies
 RUN bun install
@@ -32,13 +32,23 @@ RUN bunx prisma generate
 # > 2.e -- Copy essential files and folders
 COPY src src
 
-# > 2.f -- Set up various environment variables
-ENV PORT 8080
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh && rm get-docker.sh
+
+
+RUN curl -sSL https://nixpacks.com/install.sh -o install.sh \
+    && chmod +x install.sh \
+    && ./install.sh \
+    && bun install -g tsx
+
+RUN curl -sSL "https://github.com/buildpacks/pack/releases/download/v0.32.1/pack-v0.32.1-linux.tgz" | tar -C /usr/local/bin/ --no-same-owner -xzv pack
 
 # > 3. RUN PROJECT --
 # > 3.a -- Expose various ports as necessary
-EXPOSE 8080
+EXPOSE 8001
+
+EXPOSE 5555
+
 
 # > 3.b -- Run
-CMD ["bun", "start"]
+CMD ["bun", "start:dev"]
 

@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import prisma from "../client";
 import ApiError from "@utils/apiError";
 
+
 /**
  * Create a new application
  * @param {Prisma.ApplicationCreateInput} data - Application data to create
@@ -11,18 +12,7 @@ import ApiError from "@utils/apiError";
 const createApplication = async (data: Prisma.ApplicationCreateInput): Promise<Application> => {
   try {
     return await prisma.application.create({
-      data: {
-        ...data,
-        // Ensure optional JSON fields are set to null if not provided
-        healthCheckSwarm: data.healthCheckSwarm ? Prisma.JsonNull : undefined,
-        restartPolicySwarm: data.restartPolicySwarm ? Prisma.JsonNull : undefined,
-        placementSwarm: data.placementSwarm ? Prisma.JsonNull : undefined,
-        updateConfigSwarm: data.updateConfigSwarm ? Prisma.JsonNull : undefined,
-        rollbackConfigSwarm: data.rollbackConfigSwarm ? Prisma.JsonNull : undefined,
-        modeSwarm: data.modeSwarm ? Prisma.JsonNull : undefined,
-        labelsSwarm: data.labelsSwarm ? Prisma.JsonNull : undefined,
-        networkSwarm: data.networkSwarm ? Prisma.JsonNull : undefined,
-      },
+      data
     });
   } catch (error) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Could not create application");
@@ -50,6 +40,7 @@ const getApplicationById = async (id: string): Promise<Application | null> => {
   try {
     return await prisma.application.findUnique({
       where: { applicationId: id },
+      include: { Project: true }
     });
   } catch (error) {
     throw new ApiError(httpStatus.NOT_FOUND, "Application not found");
@@ -72,6 +63,7 @@ const updateApplication = async (id: string, data: Prisma.ApplicationUpdateInput
     throw new ApiError(httpStatus.BAD_REQUEST, "Could not update application");
   }
 };
+
 
 /**
  * Delete an application by ID

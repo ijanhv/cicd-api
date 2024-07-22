@@ -14,16 +14,37 @@ const createProject = catchAsync(async (req: Request, res: Response) => {
 
 const getProjects = catchAsync(async (req: Request, res: Response) => {
   const projects = await projectService.getProjects();
-  res.json({ success: true, data: projects });
+  res.json({
+    success: true,
+    message: "Projects fetched successfully",
+    projects,
+  });
+});
+
+const getProjectServices = catchAsync(async (req: Request, res: Response) => {
+  const { postgres, mongoDB, application } =
+    await projectService.getProjectServicesByProjectId(req.params.projectId);
+
+  res.json({
+    success: true,
+    message: "Projects fetched successfully",
+    services: {
+      postgres,
+      mongoDB,
+      application,
+    },
+  });
 });
 
 const getProjectById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const project = await projectService.getProjectById(id);
   if (project) {
-    res.json({ success: true, data: project });
+    res.json({ success: true, message: "Project fetched successfully!", project });
   } else {
-    res.status(httpStatus.NOT_FOUND).json({ success: false, error: "Project not found" });
+    res
+      .status(httpStatus.NOT_FOUND)
+      .json({ success: false, error: "Project not found" });
   }
 });
 
@@ -31,19 +52,26 @@ const updateProject = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const projectData: Prisma.ProjectUpdateInput = req.body;
   const updatedProject = await projectService.updateProject(id, projectData);
-  res.json({ success: true, data: updatedProject });
+  res.json({
+    success: true,
+    message: "Project updated successfuly!",
+    project: updatedProject,
+  });
 });
 
 const deleteProject = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
 
   await projectService.deleteProject(id);
-  res.status(httpStatus.NO_CONTENT).json({ success: true, message: "Project deleted successfully" });
+  res
+    .status(httpStatus.NO_CONTENT)
+    .json({ success: true, message: "Project deleted successfully" });
 });
 
 export default {
   createProject,
   getProjects,
+  getProjectServices,
   getProjectById,
   updateProject,
   deleteProject,

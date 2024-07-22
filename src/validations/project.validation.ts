@@ -23,6 +23,12 @@ const getProject = {
   })
 };
 
+const getProjectServices = {
+  params: Joi.object().keys({
+    projectId: Joi.string().required()
+  })
+};
+
 const deleteProject = {
   params: Joi.object().keys({
     id: Joi.string().required()
@@ -33,5 +39,6 @@ export default {
   createProject,
   updateProject,
   getProject,
+  getProjectServices,
   deleteProject
 };

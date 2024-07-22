@@ -23,9 +23,9 @@ router.get(
 );
 
 // Update application by ID
-router.put(
+router.patch(
   "/:id",
-  validate(applicationValidation.updateApplicationSchema),
+  // validate(applicationValidation.updateApplicationSchema),
   applicationController.updateApplication
 );
 
@@ -35,5 +35,11 @@ router.delete(
   validate(applicationValidation.updateApplicationSchema),
   applicationController.deleteApplication
 );
+
+
+router.post(
+  "/deploy",
+  applicationController.deployApplication
+)
 
 export default router;
