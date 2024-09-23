@@ -2,6 +2,7 @@
 <!--   <img src="https://github.com/ijanhv/dockify-api/raw/main/public/logo.png" alt="Dockify Logo" width="200"/> -->
   <h1>Dockify API</h1>
   <p><strong>Simplify Your Docker Workflow</strong></p>
+  <p>Deploy Frontend, Backend and Databases with ease!</p>
 </div>
 
 
@@ -17,6 +18,7 @@ Dockify API offers a comprehensive set of features to streamline your Docker wor
 - 🔐 Secure API authentication
 - 📁 Volume and network management
 - 🔧 Easy configuration and setup
+- 🚀 Nixpacks for Building Images
 
 ## 💻 Tech Stack
 
